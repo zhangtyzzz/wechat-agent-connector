@@ -51,6 +51,7 @@ export function startDaemon(configPath: string, config: GatewayConfig): { pid: n
 
   const cliPath = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "cli.js");
   const child = spawn(process.execPath, [cliPath, "serve", "--config", configPath], {
+    cwd: config.projectDir,
     detached: true,
     stdio: ["ignore", out, err],
   });

@@ -3,17 +3,19 @@ import assert from "node:assert/strict";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
-import { runShellAdapter } from "./shell-adapter.js";
+import { invokeCliJsonAdapter } from "./adapter-cli-json.js";
 
-test("shell adapter returns parsed JSON reply", async () => {
+test("cli json adapter returns parsed JSON reply", async () => {
   const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../../..");
-  const reply = await runShellAdapter(
+  const reply = await invokeCliJsonAdapter(
     {
-      type: "shell",
+      type: "shell-json",
       command: "node",
       args: [path.join(repoRoot, "examples/echo-agent.mjs")],
       mode: "stdin-json",
       timeoutMs: 5000,
+      cwd: "",
+      env: {},
     },
     {
       accountId: "acc",

@@ -10,3 +10,5 @@ tmp
 wechat-agent.config.json
 skills/wechat-agent/.repo-root
 skills/wechat-agent/.repo-root.local
+.claude
+packages/*/*.tsbuildinfo
