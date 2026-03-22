@@ -186,3 +186,7 @@ When QR login starts, the connector:
 ## Status
 
 This repository is still pre-1.0. Interfaces may continue to evolve, but the product direction is already fixed: make “WeChat -> gateway -> current CLI -> WeChat” reliable.
+
+## Links
+
+- [linux.do](https://linux.do/)
