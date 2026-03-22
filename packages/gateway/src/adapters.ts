@@ -6,6 +6,7 @@ import { stdin as input, stdout as output } from "node:process";
 import { invokeClaudeCodeAdapter } from "./adapter-claude-code.js";
 import { invokeCliJsonAdapter } from "./adapter-cli-json.js";
 import { invokeCodexAdapter } from "./adapter-codex.js";
+import { DEFAULT_ADAPTER_TIMEOUT_MS } from "./types.js";
 import type {
   AdapterCandidate,
   AdapterDefinition,
@@ -71,7 +72,7 @@ function createCliJsonAdapter(params: {
         command: resolvedCommand,
         args: config.args ?? [],
         mode: "stdin-json",
-        timeoutMs: config.timeoutMs ?? 120000,
+        timeoutMs: config.timeoutMs ?? DEFAULT_ADAPTER_TIMEOUT_MS,
         cwd: resolvedCwd,
         env: config.env ?? {},
       };
@@ -123,7 +124,7 @@ function createNativeCliAdapter(params: {
         command: resolvedCommand,
         args: config.args ?? [],
         mode: "stdin-json",
-        timeoutMs: config.timeoutMs ?? 120000,
+        timeoutMs: config.timeoutMs ?? DEFAULT_ADAPTER_TIMEOUT_MS,
         cwd: resolvedCwd,
         env: config.env ?? {},
       };

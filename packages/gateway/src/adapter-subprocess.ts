@@ -1,4 +1,5 @@
 import { spawn } from "node:child_process";
+import { DEFAULT_ADAPTER_TIMEOUT_MS } from "./types.js";
 
 export async function runSubprocess(params: {
   command: string;
@@ -8,7 +9,7 @@ export async function runSubprocess(params: {
   env?: Record<string, string>;
   timeoutMs?: number;
 }): Promise<{ stdout: string; stderr: string; code: number | null }> {
-  const timeoutMs = params.timeoutMs ?? 120000;
+  const timeoutMs = params.timeoutMs ?? DEFAULT_ADAPTER_TIMEOUT_MS;
 
   return new Promise((resolve, reject) => {
     const child = spawn(params.command, params.args, {
@@ -49,4 +50,3 @@ export async function runSubprocess(params: {
     child.stdin.end();
   });
 }
-
