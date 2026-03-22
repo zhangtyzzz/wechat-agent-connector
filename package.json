@@ -1,0 +1,26 @@
+{
+  "name": "wechat-agent-connector",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Open source WeChat gateway for agent CLIs and local coding agents.",
+  "license": "MIT",
+  "type": "module",
+  "packageManager": "npm@10.9.2",
+  "engines": {
+    "node": ">=22"
+  },
+  "workspaces": [
+    "packages/*"
+  ],
+  "scripts": {
+    "build": "npm run build --workspaces",
+    "clean": "rm -rf packages/*/dist coverage",
+    "test": "npm run test --workspaces",
+    "typecheck": "npm run typecheck --workspaces"
+  },
+  "devDependencies": {
+    "@types/node": "^22.13.10",
+    "typescript": "^5.8.2"
+  }
+}
+

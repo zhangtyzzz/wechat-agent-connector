@@ -1,0 +1,3 @@
+display_name: WeChat Agent
+short_description: Bootstrap and operate the local WeChat agent gateway
+default_prompt: Connect the current local agent CLI to WeChat, ensure the gateway is installed and running, and repair login or runtime issues when needed.
