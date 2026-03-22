@@ -1,17 +1,11 @@
 {
   "stateDir": "~/.wechat-agent",
+  "projectDir": ".",
   "weixin": {
     "baseUrl": "https://ilinkai.weixin.qq.com",
     "cdnBaseUrl": "https://novac2c.cdn.weixin.qq.com/c2c"
   },
   "adapter": {
-    "type": "shell",
-    "command": "node",
-    "args": [
-      "./examples/echo-agent.mjs"
-    ],
-    "mode": "stdin-json",
-    "timeoutMs": 120000
+    "type": "auto"
   }
 }
-

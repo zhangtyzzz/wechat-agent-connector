@@ -5,6 +5,7 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 source "$SCRIPT_DIR/common.sh"
 
 ROOT_DIR="$(resolve_repo_root)"
+PROJECT_DIR="$(resolve_project_dir)"
 CONFIG_PATH="${WECHAT_AGENT_CONFIG:-$ROOT_DIR/wechat-agent.config.json}"
 
 cd "$ROOT_DIR"
@@ -13,4 +14,4 @@ if [ ! -f "$ROOT_DIR/packages/gateway/dist/cli.js" ]; then
   bash "$ROOT_DIR/scripts/bootstrap.sh"
 fi
 
-node "$ROOT_DIR/packages/gateway/dist/cli.js" ensure --config "$CONFIG_PATH"
+node "$ROOT_DIR/packages/gateway/dist/cli.js" ensure --config "$CONFIG_PATH" --project-dir "$PROJECT_DIR"

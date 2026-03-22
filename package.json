@@ -13,14 +13,13 @@
     "packages/*"
   ],
   "scripts": {
-    "build": "npm run build --workspaces",
+    "build": "npm run build --workspace=@wechat-agent/weixin-core && npm run build --workspace=@wechat-agent/gateway",
     "clean": "rm -rf packages/*/dist coverage",
-    "test": "npm run test --workspaces",
-    "typecheck": "npm run typecheck --workspaces"
+    "test": "npm run test --workspace=@wechat-agent/weixin-core && npm run test --workspace=@wechat-agent/gateway",
+    "typecheck": "npm run typecheck --workspace=@wechat-agent/weixin-core && npm run typecheck --workspace=@wechat-agent/gateway"
   },
   "devDependencies": {
     "@types/node": "^22.13.10",
     "typescript": "^5.8.2"
   }
 }
-

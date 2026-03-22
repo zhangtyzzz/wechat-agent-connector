@@ -9,8 +9,8 @@ import {
 } from "@wechat-agent/weixin-core";
 import { generateClientId } from "@wechat-agent/weixin-core";
 
+import { invokeAdapter, resolveAdapterConfig } from "./adapters.js";
 import { SessionStore } from "./session-store.js";
-import { runShellAdapter } from "./shell-adapter.js";
 import type { GatewayConfig } from "./types.js";
 
 export async function serveGateway(
@@ -44,13 +44,21 @@ export async function serveGateway(
       const session = sessions.load(event.accountId, event.userId);
       session.contextToken = event.contextToken ?? session.contextToken;
       session.lastMessageId = event.messageId;
+      if (config.adapter.type !== "auto") {
+        session.adapterType = resolveAdapterConfig(config.adapter).type;
+      }
       session.updatedAt = new Date().toISOString();
       sessions.save(session);
 
-      const reply = await runShellAdapter(config.adapter, {
+      const reply = await invokeAdapter(config.adapter, {
         ...event,
         session,
       });
+      if (reply.sessionId) {
+        session.adapterSessionId = reply.sessionId;
+        session.updatedAt = new Date().toISOString();
+        sessions.save(session);
+      }
       if (!reply.text?.trim()) {
         return;
       }

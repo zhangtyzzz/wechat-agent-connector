@@ -9,6 +9,7 @@ import { fileURLToPath } from "node:url";
 import { ensureWeixinStateDirs, resolveWeixinStatePaths, saveStoredAccount } from "@wechat-agent/weixin-core";
 
 import { serveGateway } from "./gateway.js";
+import { SessionStore } from "./session-store.js";
 import type { GatewayConfig } from "./types.js";
 
 test("gateway processes one inbound message and sends adapter reply", async () => {
@@ -111,9 +112,12 @@ test("gateway processes one inbound message and sends adapter reply", async () =
       baseUrl,
     },
     adapter: {
-      type: "shell",
+      type: "shell-json",
       command: "node",
-      args: [path.join(repoRoot, "examples/echo-agent.mjs")],
+      args: [
+        "-e",
+        "const fs=require('node:fs');const input=JSON.parse(fs.readFileSync(0,'utf8'));process.stdout.write(JSON.stringify({text:`echo: ${input.text}`,sessionId:'session-from-adapter'}));",
+      ],
       mode: "stdin-json",
       timeoutMs: 5000,
     },
@@ -133,4 +137,7 @@ test("gateway processes one inbound message and sends adapter reply", async () =
   assert.equal(sendBody.msg.to_user_id, "alice@im.wechat");
   assert.equal(sendBody.msg.context_token, "ctx-1");
   assert.equal(sendBody.msg.item_list[0].text_item.text, "echo: hello gateway");
+
+  const storedSession = new SessionStore(tmpDir).load("wx-test-account", "alice@im.wechat");
+  assert.equal(storedSession.adapterSessionId, "session-from-adapter");
 });

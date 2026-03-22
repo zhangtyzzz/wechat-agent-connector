@@ -8,10 +8,12 @@ Use this skill when the task is to operate or troubleshoot the local WeChat agen
 ## What This Skill Does
 
 - bootstraps the repository if needed
+- detects local supported CLIs and selects one on first run
+- binds the gateway to the current project directory so the selected CLI uses that project's own defaults
 - checks whether WeChat is already connected
 - runs QR login automatically when not connected
 - ensures the gateway is running in the background
-- shows status and expected adapter contract
+- shows runtime and service status
 
 ## Scripts
 
@@ -25,21 +27,21 @@ Use this skill when the task is to operate or troubleshoot the local WeChat agen
 
 1. Prefer `bash scripts/ensure.sh`.
 2. `ensure.sh` will bootstrap the repo if needed.
-3. If no WeChat account is connected, it will start QR login.
-4. If the gateway is not running, it will start it in background.
-5. Use `bash scripts/status.sh` when debugging.
+3. On first run it will detect local CLIs such as Codex, Claude Code, or OpenCode and ask the user to confirm one when needed.
+4. The current working directory becomes the project directory unless `WECHAT_AGENT_PROJECT_DIR` is set. This is the directory where Codex or Claude Code runs, so that project's own rules and defaults apply automatically.
+5. If no WeChat account is connected, it will start QR login.
+6. If the gateway is not running, it will start it in background.
+7. On macOS it uses `launchd` for auto-start and automatic restart.
+8. Use `bash scripts/status.sh` when debugging.
 
-## Adapter Contract
+## Project Directory
 
-The configured CLI must:
+The selected CLI runs inside the configured project directory. By default this is the current directory when `ensure.sh` runs.
 
-- read one JSON event from stdin
-- write one JSON reply to stdout
+That means:
 
-Minimal stdout shape:
+- Codex uses the project's own rules and defaults
+- Claude Code uses the project's own rules and defaults
+- this skill does not inject a custom system prompt for those native adapters
 
-```json
-{
-  "text": "reply text"
-}
-```
+Set `WECHAT_AGENT_PROJECT_DIR=/absolute/path/to/project` before running the skill if the gateway should target a different project.

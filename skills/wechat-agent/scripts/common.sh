@@ -33,3 +33,10 @@ resolve_repo_root() {
   exit 1
 }
 
+resolve_project_dir() {
+  if [ -n "${WECHAT_AGENT_PROJECT_DIR:-}" ]; then
+    printf '%s\n' "$WECHAT_AGENT_PROJECT_DIR"
+    return
+  fi
+  printf '%s\n' "$PWD"
+}
