@@ -5,6 +5,7 @@ export * from "./configure-adapter.js";
 export * from "./daemon.js";
 export * from "./doctor.js";
 export * from "./gateway.js";
+export * from "./runtime-guard.js";
 export * from "./session-store.js";
 export * from "./service.js";
 export * from "./types.js";

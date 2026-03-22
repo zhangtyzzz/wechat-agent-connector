@@ -10,6 +10,7 @@ import {
 import { generateClientId } from "@wechat-agent/weixin-core";
 
 import { invokeAdapter, resolveAdapterConfig } from "./adapters.js";
+import { GatewayInstanceLock, MessageDeduper } from "./runtime-guard.js";
 import { SessionStore } from "./session-store.js";
 import type { GatewayConfig } from "./types.js";
 
@@ -31,51 +32,64 @@ export async function serveGateway(
     token: account.token,
   });
   const sessions = new SessionStore(config.stateDir);
+  const lock = new GatewayInstanceLock(config.stateDir);
+  const deduper = new MessageDeduper(config.stateDir);
 
-  output.log(`gateway started for account ${account.accountId}`);
+  lock.acquire();
 
-  await runLongPollLoop({
-    accountId: account.accountId,
-    statePaths,
-    client,
-    signal,
-    onEvent: async (event) => {
-      output.log(`inbound ${event.userId}: ${event.text}`);
-      const session = sessions.load(event.accountId, event.userId);
-      session.contextToken = event.contextToken ?? session.contextToken;
-      session.lastMessageId = event.messageId;
-      if (config.adapter.type !== "auto") {
-        session.adapterType = resolveAdapterConfig(config.adapter).type;
-      }
-      session.updatedAt = new Date().toISOString();
-      sessions.save(session);
+  try {
+    output.log(`gateway started for account ${account.accountId}`);
 
-      const reply = await invokeAdapter(config.adapter, {
-        ...event,
-        session,
-      });
-      if (reply.sessionId) {
-        session.adapterSessionId = reply.sessionId;
+    await runLongPollLoop({
+      accountId: account.accountId,
+      statePaths,
+      client,
+      signal,
+      onEvent: async (event) => {
+        if (!deduper.claim(event.accountId, event.messageId)) {
+          output.log(`skip duplicate message ${event.messageId} from ${event.userId}`);
+          return;
+        }
+
+        output.log(`inbound ${event.userId}: ${event.text}`);
+        const session = sessions.load(event.accountId, event.userId);
+        session.contextToken = event.contextToken ?? session.contextToken;
+        session.lastMessageId = event.messageId;
+        if (config.adapter.type !== "auto") {
+          session.adapterType = resolveAdapterConfig(config.adapter).type;
+        }
         session.updatedAt = new Date().toISOString();
         sessions.save(session);
-      }
-      if (!reply.text?.trim()) {
-        return;
-      }
-      const contextToken = event.contextToken ?? session.contextToken;
-      if (!contextToken) {
-        output.error(`skip reply to ${event.userId}: missing context token`);
-        return;
-      }
-      await client.sendTextMessage({
-        toUserId: event.userId,
-        text: reply.text,
-        contextToken,
-        clientId: generateClientId("wechat-agent"),
-      });
-      output.log(`outbound ${event.userId}: ${reply.text}`);
-    },
-  });
+
+        const reply = await invokeAdapter(config.adapter, {
+          ...event,
+          session,
+        });
+        if (reply.sessionId) {
+          session.adapterSessionId = reply.sessionId;
+          session.updatedAt = new Date().toISOString();
+          sessions.save(session);
+        }
+        if (!reply.text?.trim()) {
+          return;
+        }
+        const contextToken = event.contextToken ?? session.contextToken;
+        if (!contextToken) {
+          output.error(`skip reply to ${event.userId}: missing context token`);
+          return;
+        }
+        await client.sendTextMessage({
+          toUserId: event.userId,
+          text: reply.text,
+          contextToken,
+          clientId: generateClientId("wechat-agent"),
+        });
+        output.log(`outbound ${event.userId}: ${reply.text}`);
+      },
+    });
+  } finally {
+    lock.release();
+  }
 }
 
 export function describeAccount(
