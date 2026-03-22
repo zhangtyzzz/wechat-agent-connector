@@ -7,7 +7,7 @@ import path from "node:path";
 import { ensureAdapterConfigured } from "./configure-adapter.js";
 import { loadGatewayConfig, saveGatewayConfig } from "./config.js";
 import { resolveAdapterConfig } from "./adapters.js";
-import type { GatewayConfig } from "./types.js";
+import { DEFAULT_ADAPTER_TIMEOUT_MS, type GatewayConfig } from "./types.js";
 
 test("ensureAdapterConfigured keeps existing adapter selection", async () => {
   const dir = fs.mkdtempSync(path.join(os.tmpdir(), "wechat-agent-config-"));
@@ -22,7 +22,7 @@ test("ensureAdapterConfigured keeps existing adapter selection", async () => {
       command: "node",
       args: ["./examples/echo-agent.mjs"],
       mode: "stdin-json",
-      timeoutMs: 120000,
+      timeoutMs: DEFAULT_ADAPTER_TIMEOUT_MS,
     },
   };
   saveGatewayConfig(configPath, initial);
@@ -38,7 +38,7 @@ test("resolveAdapterConfig keeps working with a named command", () => {
     command: "claude",
     args: [],
     mode: "stdin-json",
-    timeoutMs: 120000,
+    timeoutMs: DEFAULT_ADAPTER_TIMEOUT_MS,
     cwd: "/tmp/project",
   });
 

@@ -1,6 +1,6 @@
 import { chooseAdapterCandidate, detectAvailableAdapters } from "./adapters.js";
 import { saveGatewayConfig } from "./config.js";
-import type { GatewayConfig } from "./types.js";
+import { DEFAULT_ADAPTER_TIMEOUT_MS, type GatewayConfig } from "./types.js";
 
 export async function ensureAdapterConfigured(
   configPath: string,
@@ -20,7 +20,7 @@ export async function ensureAdapterConfigured(
       command: selected.command,
       args: [],
       mode: "stdin-json",
-      timeoutMs: 120000,
+      timeoutMs: DEFAULT_ADAPTER_TIMEOUT_MS,
       cwd: config.projectDir,
     },
   };

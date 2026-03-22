@@ -1,6 +1,7 @@
 import type { WeixinInboundEvent } from "@wechat-agent/weixin-core";
 
 export type AdapterType = "auto" | "shell-json" | "codex" | "claude-code" | "opencode";
+export const DEFAULT_ADAPTER_TIMEOUT_MS = 600_000;
 
 export interface CliJsonAdapterConfig {
   type: AdapterType;
