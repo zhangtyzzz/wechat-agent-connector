@@ -2,6 +2,37 @@
 
 [简体中文](./README.md)
 
+## Prompt To Give Your AI
+
+Send the following prompt as-is to Claude Code, Codex, or another terminal-capable AI:
+
+```text
+Please install and initialize the `wechat-agent` skill from this repository from scratch, using the current directory as the WeChat agent working directory.
+
+Repository:
+https://github.com/zhangtyzzz/wechat-agent-connector
+
+Strict requirements:
+1. Record the absolute path of the current directory as TARGET_PROJECT_DIR.
+2. Do not use the parent directory of TARGET_PROJECT_DIR.
+3. The connector repository must be cloned to `TARGET_PROJECT_DIR/wechat-agent-connector`.
+4. If `TARGET_PROJECT_DIR/wechat-agent-connector` does not exist, clone to that exact path. If it already exists, reuse it and do not switch to a different path.
+5. In `TARGET_PROJECT_DIR/wechat-agent-connector`, run:
+   `bash scripts/install-skill.sh`
+6. Then in `TARGET_PROJECT_DIR/wechat-agent-connector`, run:
+   `WECHAT_AGENT_PROJECT_DIR="$TARGET_PROJECT_DIR" bash ~/.codex/skills/wechat-agent/scripts/ensure.sh`
+7. Do not rely on shell working directory continuity between commands; every step must be executed explicitly in the correct directory.
+8. If WeChat login is required during initialization, automatically enter the QR login flow.
+9. After initialization, report:
+   - whether the skill is installed
+   - whether the gateway is running
+   - whether WeChat is connected
+   - which adapter is selected
+   - which projectDir is bound
+10. Do not modify the repository, do not patch plist files manually, and do not invent a new installation flow; use the repository's built-in scripts directly.
+11. Unless you hit a real blocker, do not stop to ask questions.
+```
+
 Open source WeChat gateway for agent CLIs.
 
 This repository turns the reusable parts of Tencent's OpenClaw WeChat plugin into a standalone connector: a long-running gateway receives WeChat messages, invokes a local agent CLI, and sends the reply back to WeChat.

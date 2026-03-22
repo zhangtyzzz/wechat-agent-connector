@@ -2,6 +2,37 @@
 
 [English](./README.en.md)
 
+## 发给 AI 的安装提示词
+
+把下面这段完整发给 Claude Code、Codex 或其他支持终端操作的 AI 即可：
+
+```text
+请帮我从零开始安装并初始化这个仓库里的 wechat-agent skill，让“当前目录”作为微信 agent 的工作目录。
+
+仓库地址：
+https://github.com/zhangtyzzz/wechat-agent-connector
+
+严格要求：
+1. 把“当前目录”的绝对路径记为 TARGET_PROJECT_DIR。
+2. 不要使用 TARGET_PROJECT_DIR 的上级目录。
+3. connector 仓库必须 clone 到 `TARGET_PROJECT_DIR/wechat-agent-connector`。
+4. 如果 `TARGET_PROJECT_DIR/wechat-agent-connector` 不存在，就 clone 到这个精确路径；如果已存在就直接复用，不要改用别的路径。
+5. 在 `TARGET_PROJECT_DIR/wechat-agent-connector` 目录运行：
+   `bash scripts/install-skill.sh`
+6. 然后在 `TARGET_PROJECT_DIR/wechat-agent-connector` 目录运行：
+   `WECHAT_AGENT_PROJECT_DIR="$TARGET_PROJECT_DIR" bash ~/.codex/skills/wechat-agent/scripts/ensure.sh`
+7. 不要依赖命令之间的 shell 工作目录延续；每一步都必须在正确目录里明确执行。
+8. 如果初始化过程中需要微信登录，就自动进入扫码流程。
+9. 初始化完成后，汇报这些结果：
+   - skill 是否已安装
+   - gateway 是否已运行
+   - 微信是否已连接
+   - 当前 adapter 是什么
+   - 当前绑定的 projectDir 是什么
+10. 不要自行修改仓库，不要手工改 plist，不要发明新的安装流程；直接使用仓库现有脚本。
+11. 除非遇到真正阻塞的问题，否则不要停下来问我。
+```
+
 一个面向 agent CLI 的开源微信接入网关。
 
 这个仓库把腾讯 OpenClaw 微信插件里的通用能力拆成了一个独立连接器：常驻 gateway 负责接收微信消息，再把消息转给本地 agent CLI，并把结果回发到微信。
